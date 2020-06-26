@@ -1,0 +1,104 @@
+<script src="../simpletest.js"></script>
+<script>
+  /*
+      arr.findIndex(callback(element[, index[, array]])[, thisArg])
+
+      1 - runs the function until the condition is reached - DONE
+      2 - returns the index of the first element that satisfies the condition - DONE
+      3 - return undefined when the element isn't reached - DONE
+      4 - pass the element as the first argument to the callback function - DONE
+      5 - pass the index of the element as the second argument of the callback function - DONE
+      6 - pass arr as the third argument of the array - DONE
+      7 - the second argument of findIndex binds the this reference
+      */
+
+  Array.prototype.findIndex = function (callback, thisArg) {
+    var returnValue;
+
+    if (thisArg) callback = callback.bind(thisArg);
+
+    for (var i = 0; i < this.length; i++) {
+      if (callback(this[i], i, this)) {
+        return i;
+      }
+    }
+
+    return returnValue;
+  };
+
+  tests({
+    "runs the function until the first true condition is reached": function () {
+      var counter = 0;
+      [1, 2, 3, 3, 3].findIndex(function (el) {
+        counter++;
+        return el === 3;
+      });
+
+      eq(counter, 3);
+    },
+
+    "returns the value of the first element that satisfies the condition": function () {
+      var returnValue = [13, 14, 9, 2, 17, 3].findIndex(function (el) {
+        return el <= 3;
+      });
+
+      eq(returnValue, 3);
+    },
+
+    "return undefined when the element isn't reached": function () {
+      var returnValue = [13, 14, 9, 2, 17, 3].findIndex(function (el) {
+        return el <= 0;
+      });
+
+      eq(returnValue, undefined);
+    },
+
+    "pass the element as the first element of the callback function": function () {
+      var value;
+      var returnValue = [42].findIndex(function (el) {
+        value = el;
+      });
+
+      eq(value, 42);
+    },
+
+    "pass the index of the element as the second argument of the callback function": function () {
+      var value;
+
+      var returnValue = [13, 14, 68, "a", 56].findIndex(function (
+        el,
+        index,
+        array
+      ) {
+        if (el === "a") value = index;
+      });
+
+      eq(value, 3);
+    },
+
+    "pass arr as the third argument of the array": function () {
+      var value;
+      const arr = [1, 2, 3, 5];
+      var arrReference;
+
+      var returnValue = arr.findIndex(function (el, index, array) {
+        arrReference = array;
+      });
+
+      eq(arr, arrReference);
+    },
+
+    "the second argument of findIndex binds the this reference": function () {
+      var value;
+
+      var returnValue = [12, 14, 68, 77].findIndex(
+        function (el, index, array) {
+          value = this.name;
+        },
+        { name: "bind" }
+      );
+
+      eq(value, "bind");
+    },
+  });
+</script>

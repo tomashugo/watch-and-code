@@ -1,0 +1,114 @@
+<script src="../simpletest.js"></script>
+<script>
+  /*
+      arr.every(callback(element[, index[, array]])[, thisArg])
+
+      1 - runs the function arr.length times
+      2 - the function stops when the first false condition is reached
+      3 - returns true if the condition is reached for every element of the array
+      4 - return false when the condition isn't reached for every element of the array
+      5 - pass the element as the first argument to the callback function
+      6 - pass the index of the element as the second argument of the callback function
+      7 - pass arr as the third argument of the array
+      8 - the second argument of every binds the this reference
+      */
+
+  Array.prototype.every = function (callback, thisArg) {
+    var returnValue = true;
+
+    if (thisArg) callback = callback.bind(thisArg);
+
+    for (var i = 0; i < this.length; i++) {
+      if (!callback(this[i], i, this)) {
+        return false;
+      }
+    }
+
+    return returnValue;
+  };
+
+  tests({
+    "runs the function arr.length times when the return is true": function () {
+      var counter = 0;
+      [1, 2, 3, 3, 3].every(function (el) {
+        counter++;
+        return el > 0;
+      });
+
+      eq(counter, 5);
+    },
+
+    "the function stops when the first false condition is reached": function () {
+      var counter = 0;
+      [1, 2, 3, 3, 3].every(function (el) {
+        counter++;
+        return el === 1;
+      });
+
+      eq(counter, 2);
+    },
+
+    "returns true if the condition is reached for every element of an array": function () {
+      const returnValue = [-1, -9, -3, -10].every(function (el) {
+        return el < 0;
+      });
+
+      eq(returnValue, true);
+    },
+
+    "return false when the condition isn't reached for every element of the array": function () {
+      const returnValue = [-1, -9, -3, -10].every(function (el) {
+        return el > 0;
+      });
+
+      eq(returnValue, false);
+    },
+
+    "pass the element as the first element of the callback function": function () {
+      var value;
+      var returnValue = [42].every(function (el) {
+        value = el;
+        return true;
+      });
+
+      eq(value, 42);
+    },
+
+    "pass the index of the element as the second argument of the callback function": function () {
+      var value;
+
+      var returnValue = [13, 12, 11, "a", 0].every(function (el, index, array) {
+        if (el === "a") value = index;
+        return true;
+      });
+
+      eq(value, 3);
+    },
+
+    "pass arr as the third argument of the array": function () {
+      var value;
+      const arr = [1, 2, 3, 5];
+      var arrReference;
+
+      var returnValue = arr.every(function (el, index, array) {
+        arrReference = array;
+        return true;
+      });
+
+      eq(arr, arrReference);
+    },
+
+    "the second argument of every binds the this reference": function () {
+      var value;
+
+      var returnValue = [12, 14, 68, 77].every(
+        function (el, index, array) {
+          value = this.name;
+        },
+        { name: "bind" }
+      );
+
+      eq(value, "bind");
+    },
+  });
+</script>
