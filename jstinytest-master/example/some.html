@@ -1,0 +1,111 @@
+<script src="../simpletest.js"></script>
+<script>
+  /*
+   *   arr.some(callback(element[, index[, array]])[, thisArg])
+   *
+   *   Description: true if the callback function returns a truthy value for at least one element in the array. Otherwise, false.
+   *
+   *   1 - the function runs arr.length times when the function returns false - DONE
+   *   2 - the function stops when the first true condition is reached - DONE
+   *   3 - returns true if the condition is reached for at least one element - DONE
+   *   4 - return false when the condition isn't reached on any element - DONE
+   *   5 - pass the element as the first argument to the callback function - DONE
+   *   6 - pass the index of the element as the second argument of the callback function - DONE
+   *   7 - pass arr as the third argument of the array - DONE
+   *   8 - the second argument of every binds the this reference
+   *
+   */
+
+  Array.prototype.some = function (callback, thisArg) {
+    if (thisArg) callback = callback.bind(thisArg);
+
+    for (var i = 0; i < this.length; i++) {
+      if (callback(this[i], i, this)) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  tests({
+    "the function runs arr.length times when the function returns false": function () {
+      var counter = 0;
+      var arr = [1, 2, 3, 4, 5];
+
+      arr.some(function (el) {
+        counter++;
+        return false;
+      });
+
+      eq(counter, arr.length);
+    },
+    "the function stops when the first true condition is reached": function () {
+      var counter = 0;
+      var arr = [1, 2, 3, 4, 5];
+
+      arr.some(function (el) {
+        counter++;
+        return el >= 3;
+      });
+
+      eq(counter, 3);
+    },
+    "returns true if the condition is reached for at least one element": function () {
+      var returnValue;
+
+      returnValue = [1, 2, 3, 5, 6].some(function (el) {
+        return el >= 4;
+      });
+
+      eq(returnValue, true);
+    },
+    "return false when the condition isn't reached on any element": function () {
+      var returnValue;
+
+      returnValue = [10, 15, -8, 13, 12, "a"].some(function (el) {
+        return el === 0;
+      });
+
+      eq(returnValue, false);
+    },
+    "pass the element as the first argument to the callback function": function () {
+      var value;
+      [42].some(function (el) {
+        value = el;
+      });
+      eq(value, 42);
+    },
+    "pass the index of the element as the second argument of the callback function": function () {
+      var value;
+
+      [13, 12, 11, 14].some(function (el, i) {
+        if (el === 14) value = i;
+      });
+
+      eq(value, 3);
+    },
+    "pass arr as the third argument of the array": function () {
+      const array = [1, 2, 4];
+      var insideArray;
+
+      array.some(function (el, i, arr) {
+        insideArray = arr;
+      });
+
+      eq(array, insideArray);
+    },
+    "the second argument of every binds the this reference": function () {
+      var value;
+
+      [1, 2, 4, 5].some(
+        function () {
+          value = this.name;
+        },
+        { name: "bind" }
+      );
+
+      eq(value, "bind");
+    },
+  });
+</script>

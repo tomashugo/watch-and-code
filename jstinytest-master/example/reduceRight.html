@@ -1,0 +1,176 @@
+<script src="../simpletest.js"></script>
+<script>
+  /*
+   * arr.reduceRight(callback(accumulator, currentValue[, index[, array]])[, initialValue])
+   *
+   *
+   *
+   */
+
+  Array.prototype.reduceRight = function (callback, initialValue) {
+    var resultSoFar = initialValue;
+    var length = this.length;
+    var startingIndex = length - 1;
+
+    // Detects if no initialValue
+    if (arguments.length < 2) {
+      if (Object.keys(this).length === 0) {
+        throw new TypeError("Reduce of empty array with no initial value!");
+      }
+
+      if (Object.keys(this).length === 0) {
+        var onlyIndex = Object.keys(this)[0];
+        var onlyElement = this[onlyIndex];
+
+        return onlyElement;
+      }
+
+      while (startingIndex in this === false && startingIndex >= 0) {
+        startingIndex--;
+      }
+
+      resultSoFar = this[startingIndex];
+      startingIndex--;
+    } else {
+      if (Object.keys(this).length === 0) return initialValue;
+    }
+
+    for (var i = startingIndex; i >= 0; i--) {
+      if (i in this) {
+        resultSoFar = callback(resultSoFar, this[i], i, this);
+      }
+    }
+
+    return resultSoFar;
+  };
+
+  tests({
+    "If initialValue, callback should run array.length times.": function () {
+      var numberOfTimeCallbackHasRun = 0;
+
+      [1, 3, 5].reduceRight(function () {
+        numberOfTimeCallbackHasRun++;
+      }, 0);
+
+      eq(numberOfTimeCallbackHasRun, 3);
+    },
+    "If no initialValue, callback should run array.length - 1 times.": function () {
+      var numberOfTimeCallbackHasRun = 0;
+      [1, 2].reduceRight(function () {
+        numberOfTimeCallbackHasRun++;
+      });
+      eq(numberOfTimeCallbackHasRun, 1);
+    },
+    "If initialValue, previousValue should start with initialValue.": function () {
+      [1].reduceRight(function (previousValue) {
+        eq(previousValue, 0);
+      }, 0);
+    },
+    "If initialValue, currentValue should start with array[array.length-1].": function () {
+      var counter = 0;
+
+      [14, 13, 12, 21].reduceRight(function (previousValue, currentValue) {
+        if (counter === 0) eq(currentValue, 21);
+        counter++;
+      }, 0);
+    },
+    "If initialValue, callback will starts at index array.length-1.": function () {
+      var counter = 0;
+
+      [14, 13, 12, 21].reduceRight(function (
+        previousValue,
+        currentValue,
+        currentIndex
+      ) {
+        if (counter === 0) eq(currentIndex, 3);
+        counter++;
+      },
+      0);
+    },
+
+    "If no initialValue, previousValue should start with array[array.length-1].": function () {
+      var counter = 0;
+
+      [1, 2].reduceRight(function (previousValue) {
+        if (counter === 0) eq(previousValue, 2);
+        counter++;
+      });
+    },
+
+    "If no initialValue, currentValue should start with array[array.length-2].": function () {
+      [1, 2].reduceRight(function (previousValue, currentValue) {
+        eq(currentValue, 1);
+      });
+    },
+
+    "If no initialValue, callback will start at index array.length-2.": function () {
+      [1, 2].reduceRight(function (previousValue, currentValue, currentIndex) {
+        eq(currentIndex, 0);
+      });
+    },
+
+    "If initialValue, and array is empty, return initialValue without calling callback.": function () {
+      var initialValue = 0;
+      var numberOfTimeCallbackHasRun = 0;
+      var reduceResult = [, , , ,].reduceRight(function () {
+        numberOfTimeCallbackHasRun++;
+      }, 0);
+      eq(reduceResult, 0);
+      eq(numberOfTimeCallbackHasRun, 0);
+    },
+
+    "If no initialValue, and array has one element, it should return that element without calling callback.": function () {
+      var initialValue = 0;
+      var numberOfTimeCallbackHasRun = 0;
+      var reduceResult = [1].reduceRight(function () {
+        numberOfTimeCallbackHasRun++;
+      });
+      eq(reduceResult, 1);
+      eq(numberOfTimeCallbackHasRun, 0);
+    },
+
+    "It should actually reduce.": function () {
+      var sum = [1, 2, 3].reduceRight(function (a, b) {
+        return a + b;
+      }, 0);
+
+      eq(sum, 6);
+    },
+    "If initialValue, it should exclude holes.": function () {
+      //debugger;
+      var sum = [1, 3, 2, ,].reduceRight(function (a, b) {
+        return a + b;
+      }, 0);
+
+      eq(sum, 6);
+    },
+    "If no initialValue, it should exclude holes.": function () {
+      //debugger;
+      var sum = [, 1, , 2, 3, ,].reduceRight(function (a, b) {
+        return a + b;
+      });
+
+      eq(sum, 6);
+    },
+    "If array is empty, and no initialValue, throw TypeError.": function () {
+      var isTypeError;
+      try {
+        [].reduceRight(function () {});
+      } catch (e) {
+        isTypeError = e instanceof TypeError;
+      }
+      eq(isTypeError, true);
+    },
+    "It should pass array as fourth argument to callback.": function () {
+      var testArray = [1, 2];
+      testArray.reduceRight(function (
+        previousValue,
+        currentValue,
+        currentIndex,
+        arrayToReduce
+      ) {
+        eq(arrayToReduce, testArray);
+      });
+    },
+  });
+</script>

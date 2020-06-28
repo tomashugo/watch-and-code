@@ -1,0 +1,76 @@
+<script src="../simpletest.js"></script>
+<script>
+  /*
+   * arr.reduceRight(callback(accumulator, currentValue[, index[, array]])[, initialValue])
+   *
+   * 1 - It returns a different array - DONE
+   * 2 - It concats literals - DONE
+   * 3 - It concats arrays - DONE
+   * 4 - It preservs empty values - DONE
+   * 5 - It preservs empty values of the given array - DONE
+   * 6 - The final array will have the length of the sum of all lengths - DONE
+   *
+   */
+
+  Array.prototype.concat = function () {
+    var returnArray = [];
+
+    for (var i = 0; i < this.length; i++) {
+      if (i in this) returnArray[i] = this[i];
+    }
+
+    var index = this.length;
+
+    for (var i = 0; i < arguments.length; i++) {
+      if (Array.isArray(arguments[i])) {
+        for (var j = 0; j < arguments[i].length; j++) {
+          if (j in arguments[i]) returnArray[index] = arguments[i][j];
+          index++;
+        }
+      } else {
+        returnArray[index] = arguments[i];
+        index++;
+      }
+    }
+
+    return returnArray;
+  };
+
+  tests({
+    "It returns a different array.": function () {
+      const array1 = [];
+      const array2 = array1.concat([]);
+
+      var different = true;
+
+      if (array1 === array2) different = false;
+
+      eq(different, true);
+    },
+    "It concat numbers": function () {
+      const returnedArray = [].concat(1);
+
+      eq(returnedArray[0], 1);
+    },
+    "It concat arrays": function () {
+      const returnedArray = [].concat([1]);
+
+      eq(returnedArray[0], 1);
+    },
+    "It preservs empty values of the original array": function () {
+      const returnedArray = [,].concat(1);
+
+      eq(0 in returnedArray, false);
+    },
+    "It preservs empty values of the given array": function () {
+      const returnedArray = [1].concat([, 2]);
+
+      eq(1 in returnedArray, false);
+    },
+    "The final array will have the length of the sum of all lengths": function () {
+      const returnedArray = [1].concat([2, 3, 4], 5, [, , 8]);
+
+      eq(returnedArray.length, 8);
+    },
+  });
+</script>

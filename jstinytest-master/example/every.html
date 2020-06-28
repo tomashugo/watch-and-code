@@ -3,7 +3,7 @@
   /*
       arr.every(callback(element[, index[, array]])[, thisArg])
 
-      1 - runs the function arr.length times
+      1 - runs the function arr.length times when the return is true
       2 - the function stops when the first false condition is reached
       3 - returns true if the condition is reached for every element of the array
       4 - return false when the condition isn't reached for every element of the array
@@ -14,8 +14,6 @@
       */
 
   Array.prototype.every = function (callback, thisArg) {
-    var returnValue = true;
-
     if (thisArg) callback = callback.bind(thisArg);
 
     for (var i = 0; i < this.length; i++) {
@@ -24,7 +22,7 @@
       }
     }
 
-    return returnValue;
+    return true;
   };
 
   tests({
