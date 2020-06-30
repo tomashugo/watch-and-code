@@ -1,0 +1,59 @@
+<script src="../simpletest.js"></script>
+<script>
+    /*
+     *   arr.lastIndexOf(searchElement[, fromIndex = arr.length - 1])
+     *   
+     *   1 - it returns -1 the searchElement is not found - DONE
+     *   2 - it returns -1 if fromIndex is negative and (fromIndex + arr.length) < 0 - DONE
+     *   3 - it returns the index of the last ocorrence of the searchElement in the array - DONE
+     *   4 - it utilizes fromIndex < 0 as an offset from the end of the array - DONE
+     *
+     */
+
+    Array.prototype.lastIndexOf = function (searchElement, fromIndex) {
+        var returnValue = -1;
+        var startingIndex;
+
+        if (arguments.length === 1) {
+            startingIndex = this.length - 1;
+        }
+
+        if (arguments.length >= 2) {
+            if ((fromIndex + this.length) < 0) {
+                return -1;
+            } else if (fromIndex < 0) {
+                startingIndex = this.length + fromIndex;
+            } else {
+                startingIndex = fromIndex > this.length - 1 ? this.length - 1 : fromIndex;
+            }
+        }
+
+        for (var i = startingIndex; i >= 0; i--) {
+            if (this[i] === searchElement) return i;
+        }
+
+        return returnValue;
+    };
+
+    tests({
+        "it returns -1 the searchElement is not found": function () {
+            const value = [1, 2, 3].lastIndexOf(5);
+            eq(value, -1);
+        },
+        "it returns -1 if fromIndex is negative and (fromIndex + arr.length) < 0": function () {
+            const value = [1, 2, 3].lastIndexOf(1, -4);
+
+            eq(value, -1);
+        },
+        "it returns the index of the last ocorrence of the searchElement in the array": function () {
+            const value = [1, 2, 1, 2, 1].lastIndexOf(2);
+
+            eq(value, 3);
+        },
+        "it utilizes fromIndex < 0 as an offset from the end of the array": function () {
+            const value = [1, 2, 1, 2, 1].lastIndexOf(2, -3);
+
+            eq(value, 1);
+        },
+    });
+</script>

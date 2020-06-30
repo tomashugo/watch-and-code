@@ -1,0 +1,76 @@
+<script src="../simpletest.js"></script>
+<script>
+    /*
+     *   arr.includes(valueToFind[, fromIndex])
+     *   
+     *   1 - it requires the valueToFind as the first argument
+     *   2 - it returns true if the element is found and false otherwise
+     *   3 - fromIndex set the startingValue of the search of the array
+     *   4 - if fromIndex is greater than arr.length, it returns false
+     *   5 - it accepts negative values of fromIndex as a offset from the end of the array
+     *   6 - if fromIndex < 0 and (arr.lenght + fromIndex) < 0, the search starts from position 0
+     *  
+     *   
+     *
+     */
+
+    Array.prototype.includes = function (searchElement, fromIndex) {
+        var returnValue = false;
+        var startingIndex;
+
+        if (arguments.length === 1) {
+            startingIndex = 0;
+        }
+
+        if (arguments.length >= 2) {
+            if (fromIndex >= this.length) {
+                return returnValue;
+            } else if (fromIndex < 0) {
+                if (fromIndex + this.length > 0) {
+                    startingIndex = fromIndex + this.length;
+                }
+                else {
+                    startingIndex = 0;
+                }
+            } else {
+                startingIndex = fromIndex;
+            }
+        }
+
+        for (var i = startingIndex; i < this.length; i++) {
+            if (this[i] === searchElement) return true;
+        }
+
+        return returnValue;
+    };
+
+    tests({
+        "it requires the valueToFind as the first argument": function () {
+            var value = [1, 2, 3, 4].includes(2);
+            eq(value, true);
+        },
+        "it returns true if the element is found and false otherwise": function () {
+            var value = [1, 2, 3, 4].includes(2);
+            eq(value, true);
+
+            var value = [1, 2, 3, 4].includes(5);
+            eq(value, false);
+        },
+        "fromIndex set the startingValue of the search of the array": function () {
+            var value = [1, 2, 3, 4].includes(1, 1);
+            eq(value, false);
+        },
+        "if fromIndex is greater than arr.length, it returns false": function () {
+            var value = [1, 2, 3, 4].includes(1, 5);
+            eq(value, false);
+        },
+        "it accepts negative values of fromIndex as a offset from the end of the array": function () {
+            var value = [1, 2, 3, 4].includes(4, -1);
+            eq(value, true);
+        },
+        "if fromIndex < 0 and (arr.lenght + fromIndex) < 0, the search starts from position 0": function () {
+            var value = [1, 2, 3, 4].includes(1, -5);
+            eq(value, true);
+        },
+    });
+</script>
