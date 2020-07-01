@@ -1,0 +1,41 @@
+<script src="../simpletest.js"></script>
+<script>
+    /*
+     *   arrName.pop()
+     *   
+     *   1 - removes the last element from the array and returns it
+     *   2 - if the array is empty, return undefined
+     *
+     */
+
+    Array.prototype.pop = function () {
+        if (this.length > 0) {
+            var returnValue = this[this.length - 1];
+
+            this.length -= 1;
+
+            return returnValue;
+        }
+    };
+
+    tests({
+        "removes the last element from the array and returns it": function () {
+            var myArray = [1, 2, 3];
+
+            var returnValue = myArray.pop();
+
+            eq(returnValue, 3);
+            eq(myArray[0], 1);
+            eq(myArray[1], 2);
+            eq(myArray.length, 2);
+        },
+        "if the array is empty, return undefined": function () {
+            var myArray = [];
+            var returnValue = myArray.pop();
+
+            console.log(returnValue);
+
+            eq(typeof returnValue === 'undefined', true);
+        },
+    });
+</script>

@@ -1,0 +1,55 @@
+<script src="../simpletest.js"></script>
+<script>
+    /*
+     *   arrName.shift()
+     *   
+     *   1 - inserts an element to the beginning of an array
+     *   2 - returns the new length of the array
+     *   3 - it accepts multiple elements
+     *
+     */
+
+    Array.prototype.unshift = function (/* 1 or more arguments */) {
+        var numberOfArguments = arguments.length;
+
+        for (var i = this.length - 1; i >= 0; i--) {
+            this[i + numberOfArguments] = this[i];
+        }
+
+        for (var i = 0; i < numberOfArguments; i++) {
+            this[i] = arguments[i];
+        }
+
+        return this.length;
+    };
+
+    tests({
+        "inserts an element to the beginning of an array": function () {
+            var initialArray = [1, 2, 3];
+            initialArray.unshift(4);
+
+            eq(initialArray[0], 4);
+            eq(initialArray[1], 1);
+            eq(initialArray[2], 2);
+            eq(initialArray[3], 3);
+        },
+        "returns the new length of the array": function () {
+            var returnedValue = [1, 2, 3].unshift(4);
+
+            eq(returnedValue, 4);
+        },
+        "it accepts multiple elements": function () {
+            initialArray = [1, 2, 3];
+            var returnedValue = initialArray.unshift(4, 5, 6, 7);
+
+            eq(initialArray[0], 4);
+            eq(initialArray[1], 5);
+            eq(initialArray[2], 6);
+            eq(initialArray[3], 7);
+            eq(initialArray[4], 1);
+            eq(initialArray[5], 2);
+            eq(initialArray[6], 3);
+            eq(returnedValue, 7);
+        },
+    });
+</script>

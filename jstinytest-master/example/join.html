@@ -1,0 +1,50 @@
+<script src="../simpletest.js"></script>
+<script>
+    /*
+     *   arr.join([separator])
+     *   
+     *   1 - it returns an empty array if arr.length 0
+     *   2 - it converts an array into a string with the separator indicated
+     *   3 - if the separator is an empty string the array elements are separated with a comma
+     *   4 - if the arr.length === 1 it returns arr[0]
+     */
+
+    Array.prototype.join = function (separator) {
+        if (this.length === 0) return "";
+        if (this.length === 1) return this[0];
+
+        var returnedString = this[0];
+
+        separator = separator ? separator : ",";
+
+        for (var i = 1; i < this.length; i++) {
+            returnedString += separator + this[i];
+        }
+
+        return returnedString;
+    };
+
+    tests({
+        "it returns an empty array if arr.length 0": function () {
+            var returnValue = [].join(",");
+
+            eq(returnValue, "");
+        },
+        "it converts an array into a string with the separator indicated": function () {
+            var returnValue = ["tomas", "hugo", "ribeiro"].join(",")
+
+            eq(returnValue, "tomas,hugo,ribeiro")
+        },
+        "if the separator is an empty string the array elements are separated with a comma": function () {
+            var returnValue = ["tomas", "hugo", "ribeiro"].join()
+
+            eq(returnValue, "tomas,hugo,ribeiro")
+        },
+        "if the arr.length === 1 it returns arr[0]": function () {
+            debugger;
+            var returnValue = ["tomas"].join("-");
+
+            eq(returnValue, "tomas")
+        },
+    });
+</script>

@@ -1,0 +1,67 @@
+<script src="../simpletest.js"></script>
+<script>
+    /*
+     *   arr.push([element1[, ...[, elementN]]])
+     *   
+     *   1 - if there is no arguments, returns arr.length
+     *   2 - If there is no argments the array is unchanged
+     *   3 - changes the initial array inserting the first argumento into the end of the array
+     *   4 - returns the number of elements of the final array
+     *   5 - accepts multiple arguments
+     *
+     */
+
+    Array.prototype.push = function (newElement) {
+        if (arguments.length === 0) return this.length;
+
+        for (var i = 0; i < arguments.length; i++) {
+            this[this.length] = arguments[i];
+        }
+
+        return this.length;
+    };
+
+    tests({
+        "if there is no arguments, returns arr.length": function () {
+            originalArray = [1, 2, 3];
+            var returnedValue = originalArray.push();
+
+            eq(returnedValue, originalArray.length);
+        },
+        "if there is no argments the array is unchanged": function () {
+            originalArray = [1, 2, 3];
+            var returnedValue = originalArray.push();
+
+            eq(originalArray.length, 3);
+            eq(originalArray[0], 1);
+            eq(originalArray[1], 2);
+            eq(originalArray[2], 3);
+        },
+        "changes the initial array inserting the first argumento into the end of the array": function () {
+            var originalArray = [42];
+            originalArray.push(42);
+
+            eq(originalArray[0], 42);
+            eq(originalArray[1], 42);
+            eq(originalArray.length, 2);
+
+        },
+        "returns the number of elements of the final array": function () {
+            var originalArray = [42];
+            var returnValue = originalArray.push(42);
+
+            eq(originalArray.length, returnValue);
+        },
+        "accepts multiple arguments": function () {
+            var originalArray = [42];
+
+            originalArray.push(42, 13, "a");
+
+            eq(originalArray[0], 42);
+            eq(originalArray[1], 42);
+            eq(originalArray[2], 13);
+            eq(originalArray[3], "a");
+            eq(originalArray.length, 4);
+        },
+    });
+</script>
