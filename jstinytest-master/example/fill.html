@@ -1,0 +1,150 @@
+<script src="../simpletest.js"></script>
+<script>
+    // 
+    //    arr.fill(value[, start[, end]])
+    // 
+    //    The fill() method changes all elements in an array to a static value, 
+    //    from a start index (default 0) to an end index (default array.length). 
+    //    It returns the modified array.
+    // 
+    //    1 - it returns an array.
+    //    2 - it change the elements of the array with the value provided. if `start` is not provided, it starts with zero.
+    //    3 - if `start` is provided, it starts with it.
+    //    4 - if start is negative, it is treated as array.length + start.
+    //    5 - if array.length + start < 0, it starts with 0.
+    //    6 - if start >= arr.length, it returns the original array.
+    //    7 - if end is provided, it ends with it.
+    //    8 - if end is negative, it is treated as array.length + end. 
+    //    9 - if array.length + end < 0, it returns the original array.
+    //    10 - it will change the array itself and return it, not a copy of it, fill is a mutator method.
+    // 
+    // 
+
+    Array.prototype.fill = function (value, start, end) {
+        var startingValue;
+
+        if (start) {
+            if (start < 0) {
+                startingValue = start + this.length;
+                startingValue = startingValue > 0 ? startingValue : 0;
+            }
+            else if (start >= this.length) {
+                return this;
+            }
+            else {
+                startingValue = start;
+            }
+        }
+        else {
+            startingValue = 0;
+        }
+
+        if (end) {
+            if (end < 0) {
+                endingValue = end + this.length;
+            }
+            else if (end >= this.length) {
+                endingValue = this.length;
+            }
+            else {
+                endingValue = end;
+            }
+        }
+        else {
+            endingValue = this.length;
+        }
+
+        if (endingValue < 0) return this;
+
+        for (var i = startingValue; i < endingValue; i++) {
+            this[i] = value;
+        }
+
+        return this;
+    };
+
+    tests({
+        "it returns an array.": function () {
+            const array1 = [1, 2, 3, 4].fill();
+            eq(Array.isArray(array1), true);
+        },
+        "it change the elements of the array with the value provided. if `start` is not provided, it starts with zero.": function () {
+            const array1 = [1, 2, 3, 4].fill(0);
+
+            eq(array1[0], 0);
+            eq(array1[1], 0);
+            eq(array1[2], 0);
+            eq(array1[3], 0);
+            eq(array1.length, 4);
+        },
+        "if `start` is provided, it starts with it.": function () {
+            const array1 = [1, 2, 3, 4].fill(0, 2);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 0);
+            eq(array1[3], 0);
+            eq(array1.length, 4);
+        },
+        "if start is negative, it is treated as array.length + start.": function () {
+            const array1 = [1, 2, 3, 4].fill(0, -2);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 0);
+            eq(array1[3], 0);
+            eq(array1.length, 4);
+        },
+        "if array.length + start < 0, it starts with 0.": function () {
+            const array1 = [1, 2, 3, 4].fill(0, -5);
+
+            eq(array1[0], 0);
+            eq(array1[1], 0);
+            eq(array1[2], 0);
+            eq(array1[3], 0);
+            eq(array1.length, 4);
+        },
+        "if start >= arr.length, it returns the original array.": function () {
+            const array1 = [1, 2, 3, 4].fill(0, 4);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+            eq(array1.length, 4);
+        },
+        "if end is provided, it ends with it.": function () {
+            const array1 = [1, 2, 3, 4].fill(0, 0, 2);
+
+            eq(array1[0], 0);
+            eq(array1[1], 0);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+            eq(array1.length, 4);
+        },
+        "if end is negative, it is treated as array.length + end.": function () {
+            const array1 = [1, 2, 3, 4].fill(0, 0, -1);
+
+            eq(array1[0], 0);
+            eq(array1[1], 0);
+            eq(array1[2], 0);
+            eq(array1[3], 4);
+            eq(array1.length, 4);
+        },
+        "if array.length + end < 0, it returns the original array.": function () {
+            const array1 = [1, 2, 3, 4].fill(0, 0, -5);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+            eq(array1.length, 4);
+        },
+        "it will change the array itself and return it, not a copy of it, fill is a mutator method.": function () {
+            const originalArray = [1, 2, 3, 4]
+            const returnedArray = originalArray.fill(0, 0, -5);
+
+            eq(originalArray === returnedArray, true);
+        },
+    });
+</script>

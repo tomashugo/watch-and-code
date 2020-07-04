@@ -1,0 +1,141 @@
+<script src="../simpletest.js"></script>
+<script>
+    // 
+    //    arr.copyWithin(target[, start[, end]])
+    // 
+    //    The copyWithin() method shallow copies part of an array to another location in 
+    //    the same array and returns it without modifying its length.
+    //
+    //    1 - it returns an array.
+    //    2 - it not modifies array.length.
+    //    3 - it copies the part of the array interval [start,end) and past it beginning in target.
+    //    4 - if start is equal or greater than array.length return the original array.
+    //    5 - it starts with 0, if start is not provided.
+    //    6 - if starts < 0, it returns the initial array.
+    //    7 - if start + array.length <= 0, it returns the initial array.
+    //    8 - if end is not provided it is considered as array.length.
+    //    10 - if end < 0, it is considered as end + end.length
+    //    11 - if final end value is equal or lesser than final start value, nothing is done.
+
+    Array.prototype.copyWithin = function (target, start, end) {
+        var startingValue;
+
+        if (start) {
+            if (start < 0) {
+                startingValue = start + this.length;
+
+                if (startingValue < 0) return this;
+            }
+            else {
+                startingValue = start;
+            }
+        } else {
+            startingValue = 0;
+        }
+
+        var endingValue = end ? end : this.length;
+
+        if (start >= this.length) return this;
+
+        var pointer = target;
+
+        for (var i = startingValue; i < endingValue; i++) {
+            this[pointer++] = this[i];
+        }
+
+
+        return this;
+    };
+
+    tests({
+        "it returns an array.": function () {
+            var array1 = [1, 2, 3, 4].copyWithin();
+            eq(Array.isArray(array1), true);
+        },
+        "it not modifies array.length": function () {
+            var originalArray = [1, 2, 3, 4];
+            var array1 = originalArray.copyWithin();
+            eq(originalArray, array1);
+        },
+        "it copies the part of the array interval [start,end) and past it beginning in target.": function () {
+            var array1 = [1, 2, 3, 4].copyWithin(0, 1, 3);
+
+            eq(array1[0], 2);
+            eq(array1[1], 3);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+        },
+        "if start is equal or greater than array.length return the original array.": function () {
+            var array1 = [1, 2, 3, 4].copyWithin(0, 4);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+
+            var array1 = [1, 2, 3, 4].copyWithin(0, 5);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+        },
+        "it starts with 0, if start is not provided.": function () {
+            var array1 = [1, 2, 3, 4].copyWithin(2);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 1);
+            eq(array1[3], 2);
+        },
+        "if starts < 0, it starts with start + array.length.": function () {
+            var array1 = [1, 2, 3, 4].copyWithin(0, -2);
+
+            eq(array1[0], 3);
+            eq(array1[1], 4);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+        },
+        "if start + array.length <= 0, it returns the initial array.": function () {
+            var array1 = [1, 2, 3, 4].copyWithin(0, -4);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+
+            var array1 = [1, 2, 3, 4].copyWithin(0, -5);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+        },
+        "if end is not provided it is considered as array.length.": function () {
+            var array1 = [1, 2, 3, 4].copyWithin(0, 2);
+
+            eq(array1[0], 3);
+            eq(array1[1], 4);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+        },
+        "if end < 0, it is considered as end + end.length": function () {
+            var array1 = [1, 2, 3, 4, 5].copyWithin(0, 3, 4);
+
+            eq(array1[0], 4);
+            eq(array1[1], 2);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+            eq(array1[4], 5);
+        },
+        "if final end value is equal or lesser than final start value, nothing is done.": function () {
+            var array1 = [1, 2, 3, 4, 5].copyWithin(0, 3, 2);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+            eq(array1[4], 5);
+        }
+    });
+</script>
