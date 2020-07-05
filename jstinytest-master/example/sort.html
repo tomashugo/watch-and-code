@@ -1,0 +1,67 @@
+<script src="../simpletest.js"></script>
+<script>
+    // 
+    //    arr.sort([compareFunction])
+    // 
+    //    1 - it orders the elements of the array.
+    //    2 - it accepts a compare function.
+    //    3 - it returns the sorted array in place.
+    // 
+
+    Array.prototype.sort = function (sortFunction) {
+        var change = true;
+        var contador = 0;
+
+        if (!sortFunction) {
+            sortFunction = function (a, b) {
+                return a - b;
+            }
+        }
+
+        while (change) {
+            change = false;
+            for (var i = 0; i < this.length - 1; i++) {
+                if (sortFunction(this[i], this[i + 1]) > 0) {
+                    var dumb = this[i];
+                    this[i] = this[i + 1];
+                    this[i + 1] = dumb;
+
+                    change = true;
+                }
+                contador++;
+            }
+        }
+
+        return this;
+    };
+
+    tests({
+        "it orders the elements of the array.": function () {
+            var array1 = [4, 9, 1, 0, 7].sort();
+
+            eq(array1[0], 0);
+            eq(array1[1], 1);
+            eq(array1[2], 4);
+            eq(array1[3], 7);
+            eq(array1[4], 9);
+        },
+        "it accepts a compare function.": function () {
+            var array1 = [10, 23, 3, 8, 9, 3].sort(function (a, b) {
+                return a - b;
+            });
+
+            eq(array1[0], 3);
+            eq(array1[1], 3);
+            eq(array1[2], 8);
+            eq(array1[3], 9);
+            eq(array1[4], 10);
+            eq(array1[5], 23);
+        },
+        "the array is sorted in place, and no copy is made.": function () {
+            var originalArray = [1, 2, 3, 4];
+            var array1 = originalArray.sort();
+
+            eq(originalArray === array1, true);
+        }
+    });
+</script>

@@ -1,0 +1,199 @@
+<script src="../simpletest.js"></script>
+<script>
+    // 
+    //  let arrDeletedItems = array.splice(start[, deleteCount[, item1[, item2[, ...]]]])
+    //
+    //  method changes the contents of an array by 
+    //  removing or replacing existing elements and/or adding new elements in place.
+    //  
+    // 
+    //  1 - if deleteCount is not set it deletes all the elements of the array from start to array.length - DONE
+    //  2 - it returns an array containing the deleted items - DONE
+    //  3 - if deleteCount is setted, it determines the number of elements deleted from start - DONE
+    //  4 - the remaining arguments added after deleteCount are added in the original array - DONE
+    //  5 - if start is greater than the length of the array, it is set to the length of the array and the elements are only added - DONE
+    //  6 - if start is negative, it is treated as an offset and is set to array.length + start - DONE
+    //  7 - if start + array.length is negative it is set to 0 - DONE
+    //  8 - if deleteCount is zero or negative and there is no items do be added, the array remains the same and an empty array is returned - DONE
+    //  9 - if only one element is removed, an array of one element is returned
+    //  
+
+    Array.prototype.splice = function (start, deleteCount) {
+        var numberOfElementsToAdd = (arguments.length - 2) > 0 ? arguments.length - 2 : 0;
+        var returnedArray = [];
+        var startingValue;
+
+        if (start) {
+            if (start > this.length && numberOfElementsToAdd === 0) {
+                return returnedArray;
+            } else if (start >= this.length && numberOfElementsToAdd != 0) {
+                startingValue = this.length;
+                deleteCount = 0;
+            } else if (start < 0) {
+                if (start + this.length > 0) {
+                    startingValue = start + this.length;
+                }
+                else {
+                    startingValue = 0;
+                }
+            }
+            else {
+                startingValue = start;
+            }
+
+            var deletedItems = 0;
+
+            var numberOfElementsToDelete = deleteCount ? deleteCount : this.length - start;
+
+            for (var i = startingValue; i < startingValue + numberOfElementsToDelete; i++) {
+                returnedArray.push(this[i]);
+                delete this[i];
+                deletedItems++;
+            }
+
+            for (var i = startingValue; i < this.length; i++) {
+                this[i] = this[i + deletedItems];
+            }
+
+            this.length -= deletedItems;
+
+            if (numberOfElementsToAdd > 0) {
+                for (var i = this.length - 1; i >= startingValue; i--) {
+                    this[i + numberOfElementsToAdd] = this[i];
+                }
+
+                var x = 0;
+                for (var i = startingValue; i < startingValue + numberOfElementsToAdd; i++) {
+                    this[i] = arguments[2 + x];
+                    x++;
+
+                }
+            }
+        }
+
+        return returnedArray;
+    };
+
+    tests({
+        "if deleteCount is not set it deletes all the elements of the array from start to array.length": function () {
+            var array1 = [1, 2, 3, 4, 5];
+
+            array1.splice(2);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1.length, 2);
+        },
+        "it returns an array containing the deleted items": function () {
+            var array1 = [1, 2, 3, 4, 5];
+
+            var array2 = array1.splice(2);
+
+            eq(array2[0], 3);
+            eq(array2[1], 4);
+            eq(array2[2], 5);
+            eq(array2.length, 3);
+        },
+        "if deleteCount is setted, it determines the number of elements deleted from start": function () {
+            var array1 = [1, 2, 3, 4, 5];
+
+            var array2 = array1.splice(2, 2);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 5);
+            eq(array1.length, 3);
+
+            eq(array2[0], 3);
+            eq(array2[1], 4);
+            eq(array2.length, 2);
+        },
+        "the remaining arguments added after deleteCount are added in the original array": function () {
+            var array1 = [1, 2, 3, 4, 5];
+
+            var array2 = array1.splice(2, 2, 10, 11);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 10);
+            eq(array1[3], 11);
+            eq(array1[4], 5);
+            eq(array1.length, 5);
+        },
+        "if start is greater than the length of the array, it is set to the length of the array and the elements are only added": function () {
+            var array1 = [1, 2, 3, 4, 5];
+
+            var array2 = array1.splice(5, 2, 10, 11);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+            eq(array1[4], 5);
+            eq(array1[5], 10);
+            eq(array1[6], 11);
+            eq(array1.length, 7);
+        },
+        "if start is negative, it is treated as an offset and is set to array.length + start": function () {
+            var array1 = [1, 2, 3, 4, 5];
+
+            var array2 = array1.splice(-2, 1, 10, 11);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 3);
+            eq(array1[3], 10);
+            eq(array1[4], 11);
+            eq(array1[5], 5);
+            eq(array1.length, 6);
+        },
+        "if start + array.length is negative it is set to 0": function () {
+            var array1 = [1, 2, 3, 4, 5];
+
+            var array2 = array1.splice(-20, 1, 10, 11);
+
+            eq(array1[0], 10);
+            eq(array1[1], 11);
+            eq(array1[2], 2);
+            eq(array1[3], 3);
+            eq(array1[4], 4);
+            eq(array1[5], 5);
+            eq(array1.length, 6);
+        },
+        "if deleteCount is zero or negative and there is no items do be added, the array remains the same and an empty array is returned": function () {
+            var array1 = [1, 2, 3, 4, 5];
+
+            var array2 = array1.splice(2, -1, 10, 11);
+
+            console.log(array1);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 10);
+            eq(array1[3], 11);
+            eq(array1[4], 3);
+            eq(array1[5], 4);
+            eq(array1[6], 5);
+            eq(array1.length, 7);
+        },
+        "if deleteCount is zero or negative and there is no items do be added, the array remains the same and an empty array is returned": function () {
+            var array1 = [1, 2, 3, 4, 5];
+
+            var array2 = array1.splice(2, -1);
+
+            eq(array1[0], 1);
+            eq(array1[1], 2);
+            eq(array1[2], 3);
+            eq(array1[3], 4);
+            eq(array1[4], 5);
+            eq(array1.length, 5);
+        },
+        "if only one element is removed, an array of one element is returned": function () {
+            var array1 = [1, 2, 3, 4, 5];
+            var array2 = array1.splice(2, 1, 10, 11);
+
+            eq(Array.isArray(array2), true);
+            eq(array2.length, 1);
+        }
+    });
+</script>
